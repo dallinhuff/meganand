@@ -4,14 +4,15 @@ package http.endpoint
 import http.request.CreateAddressRequest
 import model.Address
 
-import zio.*
 import sttp.tapir.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.zio.jsonBody
 
+/**
+ * endpoints for address CRUD ops
+ */
 trait AddressEndpoints:
-  private type EP[I, O] = Endpoint[Unit, I, Unit, O, Any]
-  val createEndpoint: EP[CreateAddressRequest, Address] =
+  val createEndpoint: Endpoint[Unit, CreateAddressRequest, Unit, Address, Any] =
     endpoint
       .tag("address")
       .name("create")
@@ -21,7 +22,7 @@ trait AddressEndpoints:
       .in(jsonBody[CreateAddressRequest])
       .out(jsonBody[Address])
     
-  val getByIdEndpoint: EP[Long, Option[Address]] =
+  val getByIdEndpoint: Endpoint[Unit, Long, Unit, Option[Address], Any] =
     endpoint
       .tag("address")
       .name("create")
@@ -30,7 +31,7 @@ trait AddressEndpoints:
       .get
       .out(jsonBody[Option[Address]])
     
-  val getAllEndpoint: EP[Unit, List[Address]] =
+  val getAllEndpoint: Endpoint[Unit, Unit, Unit, List[Address], Any] =
     endpoint
       .tag("address")
       .name("getAll")
@@ -39,7 +40,7 @@ trait AddressEndpoints:
       .get
       .out(jsonBody[List[Address]])
   
-  val deleteEndpoint: EP[Long, Address] =
+  val deleteEndpoint: Endpoint[Unit, Long, Unit, Address, Any] =
     endpoint
       .tag("address")
       .name("delete")

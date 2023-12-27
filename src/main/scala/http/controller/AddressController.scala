@@ -5,25 +5,21 @@ import http.endpoint.AddressEndpoints
 import service.AddressService
 
 import sttp.tapir.server.ServerEndpoint
-import zio.Task
+import zio.{Task, URIO, ZIO}
 
-class AddressController private (service: AddressService) extends BaseController with AddressEndpoints:
-  val create: ServerEndpoint[Any, Task] =
-    createEndpoint.serverLogicSuccess: req =>
-      ???
-
-  val getById: ServerEndpoint[Any, Task] =
-    getByIdEndpoint.serverLogicSuccess: id =>
-      ???
-
-  val getAll: ServerEndpoint[Any, Task] =
-    getAllEndpoint.serverLogicSuccess(_ => ???)
-
-  val delete: ServerEndpoint[Any, Task] =
-    deleteEndpoint.serverLogicSuccess: id =>
-      ???
-
+/**
+ * the controller for handling address routes
+ * @param service the service containing the business logic for addresses
+ */
+class AddressController private (service: AddressService) extends Controller with AddressEndpoints:
   override val routes: List[ServerEndpoint[Any, Task]] =
-    List(create, getById, getAll, delete)
+    List(
+      createEndpoint.serverLogicSuccess(service.create),
+      getByIdEndpoint.serverLogicSuccess(service.getById),
+      getAllEndpoint.serverLogicSuccess(_ => service.getAll),
+      deleteEndpoint.serverLogicSuccess(service.delete)
+    )
 
-object AddressController
+object AddressController extends ControllerZIO[AddressController, AddressService]:
+  override val makeZIO: URIO[AddressService, AddressController] =
+    ZIO.service[AddressService].map(new AddressController(_))
