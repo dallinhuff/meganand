@@ -1,8 +1,9 @@
 package com.dallinhuff.meganand
 
+import com.dallinhuff.meganand.config.{Configs, JwtConfig}
 import com.dallinhuff.meganand.http.HttpApi
-import com.dallinhuff.meganand.repository.{AddressRepositoryLive, Repository}
-import com.dallinhuff.meganand.service.AddressServiceLive
+import com.dallinhuff.meganand.repository.{AddressRepositoryLive, Repository, UserRepositoryLive}
+import com.dallinhuff.meganand.service.{AddressServiceLive, JwtServiceLive, UserServiceLive}
 import sttp.tapir.server.interceptor.cors.CORSInterceptor
 import sttp.tapir.server.ziohttp.{ZioHttpInterpreter, ZioHttpServerOptions}
 import zio.*
@@ -23,8 +24,15 @@ object Application extends ZIOAppDefault:
   
   override def run: Task[Unit] =
     serverProgram.provide(
+      // server
       Server.default,
+      Configs.makeLayer[JwtConfig]("dallinhuff.jwt"),
+      // services
       AddressServiceLive.layer,
+      UserServiceLive.layer,
+      JwtServiceLive.layer,
+      // repo
       AddressRepositoryLive.layer,
+      UserRepositoryLive.layer,
       Repository.dataLayer
     )
