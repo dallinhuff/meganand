@@ -18,7 +18,7 @@ trait AddressEndpoints extends Endpoints:
       .out(jsonBody[Address])
 
   val readEndpoint =
-    baseEndpoint
+    secureEndpoint
       .tag("address")
       .name("read")
       .description("read an address by id")
@@ -27,7 +27,7 @@ trait AddressEndpoints extends Endpoints:
       .out(jsonBody[Option[Address]])
 
   val readAllEndpoint =
-    baseEndpoint
+    secureEndpoint
       .tag("address")
       .name("read")
       .description("read all addresses")
@@ -36,7 +36,7 @@ trait AddressEndpoints extends Endpoints:
       .out(jsonBody[List[Address]])
 
   val updateEndpoint =
-    baseEndpoint
+    secureEndpoint
       .tag("address")
       .name("update")
       .description("update an existing address")
@@ -45,7 +45,7 @@ trait AddressEndpoints extends Endpoints:
       .out(jsonBody[Address])
     
   val deleteEndpoint =
-    baseEndpoint
+    secureEndpoint
       .tag("address")
       .name("update")
       .description("delete an existing address")

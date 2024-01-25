@@ -52,10 +52,9 @@ class AddressRepositoryLive private (quill: Quill.Postgres[SnakeCase])
           .delete
           .returning(a => a)
     yield deleted
-    
+
 object AddressRepositoryLive:
-  val layer =
-    ZLayer:
-      ZIO
-        .service[Quill.Postgres[SnakeCase]]
-        .map(AddressRepositoryLive(_))
+  val layer = ZLayer:
+    ZIO
+      .service[Quill.Postgres[SnakeCase]]
+      .map(AddressRepositoryLive(_))
