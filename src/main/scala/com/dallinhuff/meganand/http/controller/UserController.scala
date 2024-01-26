@@ -6,6 +6,12 @@ import com.dallinhuff.meganand.service.{JwtService, UserService}
 import sttp.tapir.server.ServerEndpoint
 import zio.*
 
+/** Http Controller for handling user routes
+  * @param userService
+  *   service layer for user business logic
+  * @param jwtService
+  *   service layer for JWT verification/generation
+  */
 class UserController private (
     userService: UserService,
     jwtService: JwtService
@@ -28,9 +34,9 @@ class UserController private (
     register,
     login
   )
-  
+
 object UserController:
-  val makeZIO = for
+  val makeZIO: URIO[UserService & JwtService, UserController] = for
     userService <- ZIO.service[UserService]
-    jwtService <- ZIO.service[JwtService]
+    jwtService  <- ZIO.service[JwtService]
   yield UserController(userService, jwtService)

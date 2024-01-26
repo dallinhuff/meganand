@@ -2,7 +2,8 @@ package com.dallinhuff.meganand.model.data
 
 import zio.json.JsonCodec
 
-case class Address(
+/** An address of a person */
+final case class Address(
     id: Long,
     firstName: String,
     lastName: String,

@@ -6,10 +6,13 @@ import io.getquill.*
 import io.getquill.jdbczio.Quill
 import zio.*
 
+/** Repository layer for Address */
 trait AddressRepository extends Repository[Address]
 
-class AddressRepositoryLive private (quill: Quill.Postgres[SnakeCase])
-    extends AddressRepository:
+/** Implementation of AddressRepository using Quill */
+final class AddressRepositoryLive private (
+    quill: Quill.Postgres[SnakeCase]
+) extends AddressRepository:
   import quill.*
 
   inline given schema: SchemaMeta[Address] =
@@ -52,9 +55,11 @@ class AddressRepositoryLive private (quill: Quill.Postgres[SnakeCase])
           .delete
           .returning(a => a)
     yield deleted
+end AddressRepositoryLive
 
 object AddressRepositoryLive:
-  val layer = ZLayer:
-    ZIO
-      .service[Quill.Postgres[SnakeCase]]
-      .map(AddressRepositoryLive(_))
+  val layer: ZLayer[Quill.Postgres[SnakeCase], Nothing, AddressRepositoryLive] =
+    ZLayer:
+      ZIO
+        .service[Quill.Postgres[SnakeCase]]
+        .map(AddressRepositoryLive(_))

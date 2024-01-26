@@ -6,6 +6,12 @@ import com.dallinhuff.meganand.service.{AddressService, JwtService}
 import sttp.tapir.server.ServerEndpoint
 import zio.*
 
+/** Controller for routing address endpoints
+  * @param addressService
+  *   service layer for handling address business logic
+  * @param jwtService
+  *   service layer for handling JWT verification
+  */
 class AddressController private (
     addressService: AddressService,
     jwtService: JwtService
@@ -37,7 +43,7 @@ class AddressController private (
   )
 
 object AddressController:
-  val makeZIO = for
+  val makeZIO: URIO[AddressService & JwtService, AddressController] = for
     addressService <- ZIO.service[AddressService]
     jwtService     <- ZIO.service[JwtService]
   yield AddressController(addressService, jwtService)

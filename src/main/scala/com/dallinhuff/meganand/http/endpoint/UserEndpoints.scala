@@ -6,8 +6,10 @@ import sttp.tapir.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.zio.jsonBody
 
+/** User Tapir endpoints to be handled by a controller */
 trait UserEndpoints extends Endpoints:
-  val registerEndpoint =
+  /** Endpoint for registering a new user */
+  val registerEndpoint: BasicEP[CreateUserRequest, UserId] =
     baseEndpoint
       .tag("user")
       .name("register")
@@ -16,8 +18,9 @@ trait UserEndpoints extends Endpoints:
       .post
       .in(jsonBody[CreateUserRequest])
       .out(jsonBody[UserId])
-    
-  val loginEndpoint =
+
+  /** Endpoint for logging in as an existing user */
+  val loginEndpoint: BasicEP[LoginRequest, UserToken] =
     baseEndpoint
       .tag("user")
       .name("login")

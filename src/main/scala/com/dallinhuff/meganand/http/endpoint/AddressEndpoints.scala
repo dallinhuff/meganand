@@ -6,8 +6,10 @@ import sttp.tapir.*
 import sttp.tapir.generic.auto.*
 import sttp.tapir.json.zio.jsonBody
 
+/** Address endpoints to be handled by a controller */
 trait AddressEndpoints extends Endpoints:
-  val createEndpoint =
+  /** endpoint create a new address posting */
+  val createEndpoint: BasicEP[CreateAddressRequest, Address] =
     baseEndpoint
       .tag("address")
       .name("create")
@@ -17,7 +19,8 @@ trait AddressEndpoints extends Endpoints:
       .in(jsonBody[CreateAddressRequest])
       .out(jsonBody[Address])
 
-  val readEndpoint =
+  /** endpoint to get an address by id */
+  val readEndpoint: SecureEP[Long, Option[Address]] =
     secureEndpoint
       .tag("address")
       .name("read")
@@ -26,7 +29,8 @@ trait AddressEndpoints extends Endpoints:
       .get
       .out(jsonBody[Option[Address]])
 
-  val readAllEndpoint =
+  /** endpoint to get all addresses */
+  val readAllEndpoint: SecureEP[Unit, List[Address]] =
     secureEndpoint
       .tag("address")
       .name("read")
@@ -35,16 +39,8 @@ trait AddressEndpoints extends Endpoints:
       .get
       .out(jsonBody[List[Address]])
 
-  val updateEndpoint =
-    secureEndpoint
-      .tag("address")
-      .name("update")
-      .description("update an existing address")
-      .in("address" / path[Long]("id"))
-      .patch
-      .out(jsonBody[Address])
-    
-  val deleteEndpoint =
+  /** endpoint to delete an existing address */
+  val deleteEndpoint: SecureEP[Long, Address] =
     secureEndpoint
       .tag("address")
       .name("update")

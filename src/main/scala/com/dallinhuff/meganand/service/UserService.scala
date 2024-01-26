@@ -10,11 +10,29 @@ import java.security.SecureRandom
 import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.PBEKeySpec
 
+/** Service layer for users */
 trait UserService:
+  /** create a new user
+    * @param req
+    *   the new user's credentials
+    * @return
+    *   the created user
+    */
   def register(req: CreateUserRequest): Task[User]
-  def login(email: String, password: String): Task[UserToken]
 
-class UserServiceLive private (
+  /** log in as an existing user
+    * @param email
+    *   the email associated with the user
+    * @param password
+    *   the password the user signed up with
+    * @return
+    *   a JWT for the user to use to make authenticated requests
+    */
+  def login(email: String, password: String): Task[UserToken]
+end UserService
+
+/** Implementation of UserService using UserRepository and JwtService */
+final class UserServiceLive private (
     userRepo: UserRepository,
     jwtService: JwtService
 ) extends UserService:
@@ -43,11 +61,12 @@ class UserServiceLive private (
 end UserServiceLive
 
 object UserServiceLive:
-  val layer = ZLayer:
-    for
-      userRepo   <- ZIO.service[UserRepository]
-      jwtService <- ZIO.service[JwtService]
-    yield UserServiceLive(userRepo, jwtService)
+  val layer: ZLayer[JwtService & UserRepository, Nothing, UserServiceLive] =
+    ZLayer:
+      for
+        userRepo   <- ZIO.service[UserRepository]
+        jwtService <- ZIO.service[JwtService]
+      yield UserServiceLive(userRepo, jwtService)
 
   private object Hasher:
     def generateHash(str: String): String =
@@ -94,3 +113,5 @@ object UserServiceLive:
             acc | (a(i) ^ b(i))
       diff == 0
   end Hasher
+end UserServiceLive
+

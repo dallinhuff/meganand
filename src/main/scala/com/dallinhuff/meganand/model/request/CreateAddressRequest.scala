@@ -2,7 +2,8 @@ package com.dallinhuff.meganand.model.request
 
 import zio.json.JsonCodec
 
-case class CreateAddressRequest(
+/** Request body to create a new address model */
+final case class CreateAddressRequest(
     firstName: String,
     lastName: String,
     streetAddress: String,
